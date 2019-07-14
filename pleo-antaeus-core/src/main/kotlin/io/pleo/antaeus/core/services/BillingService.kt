@@ -13,9 +13,21 @@ class BillingService(
     private val paymentProvider: PaymentProvider,
     private val dal: AntaeusDal
 ) {
-    fun chargeAll() {
+    fun chargeAll(): MutableMap<String, MutableList<Int>> {
         val invoices: List<Invoice> = dal.fetchInvoices()
-        for (invoice in invoices) charge(invoice)
+        var response = mutableMapOf(
+            "success" to mutableListOf<Int>(),
+            "failure" to mutableListOf<Int>())
+        for (invoice in invoices) {
+            try {
+                charge(invoice)
+                response["success"]?.add(invoice.id)
+            }
+            catch(Exception e) {
+                response["error"]?.add(invoice.id)
+            }
+        }
+        return response
     }
 
    fun charge(invoice: Invoice): Boolean {
