@@ -12,8 +12,17 @@ class BillingService(
     private val paymentProvider: PaymentProvider,
     private val dal: AntaeusDal
 ) {
+    fun chargeAll() {
+        val invoices: List<Invoice> = dal.fetchInvoices()
+        for (invoice in invoices) charge(invoice)
+    }
+
    fun charge(invoice: Invoice): Boolean {
-       
+       var customer: Customer
+       customer = dal.fetchCustomer(invoice.customerId) ?: throw CustomerNotFoundException(invoice.customerId)
+       if (invoice.amount.currency != customer.currency) {
+           throw CurrencyMismatchException(invoice.id, customer.id)
+       }
        return true
    }
 }
