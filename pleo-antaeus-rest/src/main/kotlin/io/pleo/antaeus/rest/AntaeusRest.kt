@@ -6,11 +6,13 @@ package io.pleo.antaeus.rest
 
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.get
+import io.javalin.apibuilder.ApiBuilder.post
 import io.javalin.apibuilder.ApiBuilder.path
 import io.pleo.antaeus.core.exceptions.EntityNotFoundException
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
 import io.pleo.antaeus.core.services.BillingService
+import io.pleo.antaeus.models.Customer
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -74,6 +76,11 @@ class AntaeusRest (
                        // URL: /rest/v1/customers/{:id}
                        get(":id") {
                            it.json(customerService.fetch(it.pathParam("id").toInt()))
+                       }
+                       
+                       post {
+                           customerService.create(it.body<Customer>())
+                           it.status(201)
                        }
                    }
                }
