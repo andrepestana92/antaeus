@@ -20,11 +20,11 @@ class BillingService(
             "failure" to mutableListOf<Int>())
         for (invoice in invoices) {
             try {
-                charge(invoice)
-                response["success"]?.add(invoice.id)
+                if (charge(invoice)) response["success"]?.add(invoice.id)
+                else response["failure"]?.add(invoice.id)
             }
-            catch(Exception e) {
-                response["error"]?.add(invoice.id)
+            catch(e: Exception) {
+                response["failure"]?.add(invoice.id)
             }
         }
         return response
