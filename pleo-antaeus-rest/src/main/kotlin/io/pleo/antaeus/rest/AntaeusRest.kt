@@ -91,6 +91,17 @@ class AntaeusRest (
                             it.status(201)
                        }
                    }
+                   path("pay") {
+                       // URL: /rest/v1/pay
+                       get {
+                           it.json(billingService.chargeAll())
+                       }
+
+                       // URL: /rest/v1/pay/{:id}
+                       get(":id") {
+                           it.json(billingService.chargeOne(it.pathParam("id").toInt()))
+                       }
+                   }
                }
            }
         }

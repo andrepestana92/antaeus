@@ -20,10 +20,7 @@ class InvoiceService(private val dal: AntaeusDal) {
     }
 
     fun create(invoice: Invoice) {
-        print(invoice)
         val customer: Customer? = dal.fetchCustomer(invoice.customerId)
-        print(customer)
-        print(customer!!)
         dal.createInvoice(invoice.amount, customer!!)
     }
 }
