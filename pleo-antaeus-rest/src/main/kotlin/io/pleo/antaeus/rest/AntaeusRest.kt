@@ -13,6 +13,7 @@ import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.models.Customer
+import io.pleo.antaeus.models.Invoice
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -65,6 +66,12 @@ class AntaeusRest (
                        get(":id") {
                           it.json(invoiceService.fetch(it.pathParam("id").toInt()))
                        }
+
+                        // URL: /rest/v1/invoices
+                        post {
+                            invoiceService.create(it.body<Invoice>())
+                            it.status(201)
+                       }
                    }
 
                    path("customers") {
@@ -77,10 +84,11 @@ class AntaeusRest (
                        get(":id") {
                            it.json(customerService.fetch(it.pathParam("id").toInt()))
                        }
-                       
+
+                       // URL: /rest/v1/customers
                        post {
-                           customerService.create(it.body<Customer>())
-                           it.status(201)
+                            customerService.create(it.body<Customer>())
+                            it.status(201)
                        }
                    }
                }
