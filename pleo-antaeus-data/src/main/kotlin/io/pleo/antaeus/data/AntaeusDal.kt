@@ -16,6 +16,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -54,6 +55,28 @@ class AntaeusDal(private val db: Database) {
         return fetchInvoice(id!!)
     }
 
+    fun saveInvoice(invoice: Invoice): Invoice? {
+        val id = transaction(db) {
+            // Insert the invoice and returns its new id.
+            InvoiceTable
+                .insert {
+                    it[this.value] = invoice.amount.value
+                    it[this.currency] = invoice.amount.currency.toString()
+                    it[this.status] = invoice.status.toString()
+                    it[this.customerId] = invoice.customerId
+                } get InvoiceTable.id
+        }
+
+        return fetchInvoice(id!!)
+    }
+
+    fun deleteInvoice(id: Int) {
+        transaction(db) {
+            InvoiceTable
+                .deleteWhere{InvoiceTable.id eq id}
+        }
+    }
+
     fun setPaidInvoice(invoice: Invoice) {
         transaction(db) {
             InvoiceTable.update({InvoiceTable.id eq invoice.id}) {
@@ -88,5 +111,23 @@ class AntaeusDal(private val db: Database) {
         }
 
         return fetchCustomer(id!!)
+    }
+
+    fun saveCustomer(customer: Customer): Customer? {
+        val id = transaction(db) {
+            // Insert the customer and return its new id.
+            CustomerTable.insert {
+                it[this.currency] = customer.currency.toString()
+            } get CustomerTable.id
+        }
+
+        return fetchCustomer(id!!)
+    }
+
+    fun deleteCustomer(id: Int) {
+        transaction(db) {
+            CustomerTable
+                .deleteWhere{CustomerTable.id eq id}
+        }
     }
 }
