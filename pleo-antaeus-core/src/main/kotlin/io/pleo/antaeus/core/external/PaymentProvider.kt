@@ -8,7 +8,13 @@
 
 package io.pleo.antaeus.core.external
 
+import io.pleo.antaeus.core.constants.AwsVpcSla
+import io.pleo.antaeus.core.exceptions.CustomerNotFoundException
+import io.pleo.antaeus.core.exceptions.CurrencyMismatchException
+import io.pleo.antaeus.core.exceptions.NetworkException
 import io.pleo.antaeus.models.Invoice
+import io.pleo.antaeus.models.Customer
+import io.pleo.antaeus.data.AntaeusDal
 
 interface PaymentProvider {
     /*
@@ -24,5 +30,12 @@ interface PaymentProvider {
           `NetworkException`: when a network error happens.
      */
 
-    fun charge(invoice: Invoice): Boolean
+    fun charge(invoice: Invoice, dal: AntaeusDal): Boolean {
+      var customer: Customer
+      customer = dal.fetchCustomer(invoice.customerId) ?: throw CustomerNotFoundException(invoice.customerId)
+      if (invoice.amount.currency != customer.currency) throw CurrencyMismatchException(invoice.id, customer.id)
+
+      if (Math.random() > AwsVpcSla) throw NetworkException()
+      return true
+    }
 }
