@@ -30,12 +30,5 @@ interface PaymentProvider {
           `NetworkException`: when a network error happens.
      */
 
-    fun charge(invoice: Invoice, dal: AntaeusDal): Boolean {
-      var customer: Customer
-      customer = dal.fetchCustomer(invoice.customerId) ?: throw CustomerNotFoundException(invoice.customerId)
-      if (invoice.amount.currency != customer.currency) throw CurrencyMismatchException(invoice.id, customer.id)
-
-      if (Math.random() > AwsVpcSla) throw NetworkException()
-      return true
-    }
+    fun charge(invoice: Invoice, dal: AntaeusDal): Boolean
 }
