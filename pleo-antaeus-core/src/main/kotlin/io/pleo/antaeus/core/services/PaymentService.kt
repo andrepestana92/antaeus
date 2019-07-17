@@ -18,6 +18,6 @@ class PaymentService : PaymentProvider {
         if (invoice.amount.currency != customer.currency) throw CurrencyMismatchException(invoice.id, customer.id)
 
         if (rng.nextDouble() > AwsVpcSla) throw NetworkException()
-        return true
+        return rng.nextBoolean()
     }
 }

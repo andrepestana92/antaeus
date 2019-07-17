@@ -34,6 +34,7 @@ class BillingServiceTest {
         )
         val rng_mock = mockk<Random> {
             every { nextDouble() } returns 0.0
+            every { nextBoolean() } returns true
         }
         val billingService = BillingService(paymentProvider, dal, rng_mock)
         val expected = mutableMapOf(
