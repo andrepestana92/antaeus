@@ -60,3 +60,10 @@ To finish this project, it took me four to five hours on Sunday to understand th
 On Monday, it took me about three hours to create both payment endpoints, refactor the `charge` method and create the first basic test for the BillingService. It was in this last refactor that I created the PaymentService class
 
 On Tuesday, it also took me about three hours to create the testing database model, finish the tests for BillingService, start using the `Random` object as an argument in the `charge` method, create the CustomerService and InvoiceService tests and finally, write this README
+
+
+
+### Run the server
+
+In order to run the server, just execute the command `./docker-start.sh`
+
