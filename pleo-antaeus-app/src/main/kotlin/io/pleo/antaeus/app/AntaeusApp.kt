@@ -24,6 +24,7 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import setupInitialData
 import java.sql.Connection
+import kotlin.random.Random
 
 fun main() {
     // The tables to create in the database.
@@ -51,13 +52,14 @@ fun main() {
 
     // Get third parties
     val paymentProvider = PaymentService()
+    val rng = Random
 
     // Create core services
     val invoiceService = InvoiceService(dal = dal)
     val customerService = CustomerService(dal = dal)
 
     // This is _your_ billing service to be included where you see fit
-    val billingService = BillingService(paymentProvider = paymentProvider, dal = dal)
+    val billingService = BillingService(paymentProvider = paymentProvider, dal = dal, rng = rng)
 
     // Create REST web service
     AntaeusRest(

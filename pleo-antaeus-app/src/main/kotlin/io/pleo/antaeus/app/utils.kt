@@ -39,13 +39,8 @@ internal fun setupInitialData(dal: AntaeusDal) {
 // This is the mocked instance of the payment provider
 internal fun getPaymentProvider(): PaymentProvider {
     return object : PaymentProvider {
-        override fun charge(invoice: Invoice, dal: AntaeusDal): Boolean {
-            var customer: Customer
-            customer = dal.fetchCustomer(invoice.customerId) ?: throw CustomerNotFoundException(invoice.customerId)
-            if (invoice.amount.currency != customer.currency) throw CurrencyMismatchException(invoice.id, customer.id)
-
-            if (Math.random() > AwsVpcSla) throw NetworkException()
-            return true
+        override fun charge(invoice: Invoice, dal: AntaeusDal, rng: Random): Boolean {
+            return Random.nextBoolean()
         }
     }
 }

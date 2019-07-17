@@ -15,6 +15,7 @@ import io.pleo.antaeus.core.exceptions.NetworkException
 import io.pleo.antaeus.models.Invoice
 import io.pleo.antaeus.models.Customer
 import io.pleo.antaeus.data.AntaeusDal
+import kotlin.random.Random
 
 interface PaymentProvider {
     /*
@@ -30,5 +31,5 @@ interface PaymentProvider {
           `NetworkException`: when a network error happens.
      */
 
-    fun charge(invoice: Invoice, dal: AntaeusDal): Boolean
+    fun charge(invoice: Invoice, dal: AntaeusDal, rng: Random): Boolean
 }

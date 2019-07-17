@@ -6,10 +6,12 @@ import io.pleo.antaeus.models.Invoice
 import io.pleo.antaeus.models.InvoiceStatus
 import io.pleo.antaeus.models.Customer
 import io.pleo.antaeus.data.AntaeusDal
+import kotlin.random.Random
 
 class BillingService(
     private val paymentProvider: PaymentProvider,
-    private val dal: AntaeusDal
+    private val dal: AntaeusDal,
+    private val rng: Random
 ) {
     fun chargeAll(): MutableMap<String, MutableList<Int>> {
         val invoices: List<Invoice> = dal.fetchInvoices()
@@ -44,7 +46,7 @@ class BillingService(
 
     fun chargeInvoice(invoice: Invoice): Boolean {
         try {
-            if (paymentProvider.charge(invoice, dal)) return true
+            if (paymentProvider.charge(invoice, dal, rng)) return true
             else return false
         }
         catch(e: Exception) {
