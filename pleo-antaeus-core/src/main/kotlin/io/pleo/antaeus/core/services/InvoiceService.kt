@@ -19,8 +19,8 @@ class InvoiceService(private val dal: AntaeusDal) {
         return dal.fetchInvoice(id) ?: throw InvoiceNotFoundException(id)
     }
 
-    fun create(invoice: Invoice) {
+    fun create(invoice: Invoice): Invoice? {
         val customer: Customer? = dal.fetchCustomer(invoice.customerId)
-        dal.createInvoice(invoice.amount, customer!!)
+        return dal.createInvoice(invoice.amount, customer!!)
     }
 }

@@ -17,7 +17,7 @@ class CustomerService(private val dal: AntaeusDal) {
         return dal.fetchCustomer(id) ?: throw CustomerNotFoundException(id)
     }
 
-    fun create(customer: Customer) {
-        dal.createCustomer(customer.currency)
+    fun create(customer: Customer): Customer? {
+        return dal.createCustomer(customer.currency)
     }
 }

@@ -1,16 +1,15 @@
 package io.pleo.antaeus.core.services
 
-import io.mockk.every
-import io.mockk.mockk
+import setUpTestDal
 import io.pleo.antaeus.core.exceptions.CustomerNotFoundException
-import io.pleo.antaeus.data.AntaeusDal
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.assertThrows
+import io.pleo.antaeus.models.Customer
+import io.pleo.antaeus.models.Currency
 
 class CustomerServiceTest {
-    private val dal = mockk<AntaeusDal> {
-        every { fetchCustomer(404) } returns null
-    }
+    private val dal = setUpTestDal()
 
     private val customerService = CustomerService(dal = dal)
 
@@ -20,4 +19,16 @@ class CustomerServiceTest {
             customerService.fetch(404)
         }
     }
+
+    @Test
+    fun `will return one extra customer after creation`() {
+        val totalBefore = customerService.fetchAll()
+        val newCustomer = customerService.create(Customer(
+            1, Currency.USD
+        ))
+        val totalAfter = customerService.fetchAll()
+        Assertions.assertEquals(totalBefore.size + 1, totalAfter.size)
+        dal.deleteCustomer(newCustomer!!.id)
+    }
+    
 }

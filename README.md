@@ -1,12 +1,55 @@
-## Antaeus
+## Process
 
-Antaeus (/ænˈtiːəs/), in Greek mythology, a giant of Libya, the son of the sea god Poseidon and the Earth goddess Gaia. He compelled all strangers who were passing through the country to wrestle with him. Whenever Antaeus touched the Earth (his mother), his strength was renewed, so that even if thrown to the ground, he was invincible. Heracles, in combat with him, discovered the source of his strength and, lifting him up from Earth, crushed him to death.
+Here is the process begind this solution, listed by implementation order
 
-Welcome to our challenge.
+- Understand Kotolin language
+- Creating Exceptions rules for the charge method inside the BillingService class
+- Getting all invoices and calling the charge method without any validation
+- Creating the response object returned in the chargeAll function
+- Creating two endpoint to register an Invoice and a Customer
+- Learn how to parse the body from the POST request into a object from type Invoice or Customer
+- Manually testing the Customer and Invoice creation endpoints
+- Create the enpoint to charge all the invoices and testing it
+- Creating an endpoint to charge a single invoice and testing it
+- Moving the implementation of the charge method to the PaymentProvider interface and calling it via paymentProvider argument received in the BillingService class
+- Creating the PaymentService class and moved the implementation of the method charge to this new service
+- Trying to refactor the charge method in thePaymentService class so it would not receive the dal argument needed to get the customer from the invoice.
+- Studying and creating unit test for the scenario where nothing goes wrong when charging all the invoices
+- Studying how to create a test database
+- Creating the rest of the unit tests for BillingService, InvoiceService and CustomerService
 
-## The challenge
+## Endpoints
 
-As most "Software as a Service" (SaaS) companies, Pleo needs to charge a subscription fee every month. Our database contains a few invoices for the different markets in which we operate. Your task is to build the logic that will pay those invoices on the first of the month. While this may seem simple, there is space for some decisions to be taken and you will be expected to justify them.
+For this challenge, I've created four new endpoints:
+
+- GET /rest/v1/pay: Pay all the invoices
+
+- GET /rest/v1/pay/{:id}: Pay a single invoice of od {:id}
+
+- POST /rest/v1/customers: Create a new customer
+
+  ```json
+  {
+  	"currency": "USD"
+  }
+  ```
+
+  
+
+- POST /rest/v1/invoices: Create a new invoice. The body of this request is a json in the format:
+
+  ```json
+  {
+  	"amount": {
+  		"value": 10.00,
+  		"currency": "USD"
+  	},
+  	"customerId": 100,
+  	"status": "PENDING"
+  }
+  ```
+
+
 
 ### Structure
 The code given is structured as follows. Feel free however to modify the structure to fit your needs.

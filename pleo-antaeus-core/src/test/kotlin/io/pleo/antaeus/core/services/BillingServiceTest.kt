@@ -28,12 +28,10 @@ class BillingServiceTest {
 
     @Test
     fun `will return a valid json with a successfull charge`() {
-        val mock_invoice = dal.saveInvoice(Invoice(
-        1, 1, Money(BigDecimal(10.00), Currency.USD), InvoiceStatus.PENDING
-        ))
-        val mock_customer = dal.saveCustomer(Customer(
-            1, Currency.USD
-        ))
+        val mockCustomer = dal.createCustomer(Currency.USD)
+        val mockInvoice = dal.createInvoice(
+            Money(BigDecimal(10.00), Currency.USD), mockCustomer!!, InvoiceStatus.PENDING
+        )
         val rng_mock = mockk<Random> {
             every { nextDouble() } returns 0.0
         }
@@ -46,18 +44,16 @@ class BillingServiceTest {
         expected["success"]?.add(1)
         val result = billingService.chargeAll()
         Assertions.assertEquals(expected, result)
-        dal.deleteCustomer(mock_customer!!.id)
-        dal.deleteInvoice(mock_invoice!!.id)
+        dal.deleteCustomer(mockCustomer!!.id)
+        dal.deleteInvoice(mockInvoice!!.id)
     }
 
     @Test
     fun `will trow error for diferent currency`() {
-        val mock_invoice = dal.saveInvoice(Invoice(
-        1, 1, Money(BigDecimal(10.00), Currency.USD), InvoiceStatus.PENDING
-        ))
-        val mock_customer = dal.saveCustomer(Customer(
-            1, Currency.EUR
-        ))
+        val mockCustomer = dal.createCustomer(Currency.EUR)
+        val mockInvoice = dal.createInvoice(
+            Money(BigDecimal(10.00), Currency.USD), mockCustomer!!, InvoiceStatus.PENDING
+        )
         val expected = mutableMapOf(
             "success" to mutableListOf<Int>(),
             "failure" to mutableListOf<Int>(), 
@@ -69,15 +65,15 @@ class BillingServiceTest {
         val result = billingService.chargeAll()
         Assertions.assertEquals(expected, result)
         assertThrows<CurrencyMismatchException> {
-            paymentProvider.charge(mock_invoice!!, dal, rng)
+            paymentProvider.charge(mockInvoice!!, dal, rng)
         }
-        dal.deleteCustomer(mock_customer!!.id)
-        dal.deleteInvoice(mock_invoice!!.id)
+        dal.deleteCustomer(mockCustomer!!.id)
+        dal.deleteInvoice(mockInvoice!!.id)
     }
 
     @Test
     fun `will trow error for when user doesnt exist`() {
-        val mock_invoice = dal.saveInvoice(Invoice(
+        val mockInvoice = dal.saveInvoice(Invoice(
         1, 1, Money(BigDecimal(10.00), Currency.USD), InvoiceStatus.PENDING
         ))
         val expected = mutableMapOf(
@@ -91,9 +87,9 @@ class BillingServiceTest {
         val result = billingService.chargeAll()
         Assertions.assertEquals(expected, result)
         assertThrows<CustomerNotFoundException> {
-            paymentProvider.charge(mock_invoice!!, dal, rng)
+            paymentProvider.charge(mockInvoice!!, dal, rng)
         }
-        dal.deleteInvoice(mock_invoice!!.id)
+        dal.deleteInvoice(mockInvoice!!.id)
     }
 
     @Test
@@ -106,12 +102,10 @@ class BillingServiceTest {
 
     @Test
     fun `will trow error for network error`() {
-        val mock_invoice = dal.saveInvoice(Invoice(
-        1, 1, Money(BigDecimal(10.00), Currency.USD), InvoiceStatus.PENDING
-        ))
-        val mock_customer = dal.saveCustomer(Customer(
-            1, Currency.USD
-        ))
+        val mockCustomer = dal.createCustomer(Currency.USD)
+        val mockInvoice = dal.createInvoice(
+            Money(BigDecimal(10.00), Currency.USD), mockCustomer!!, InvoiceStatus.PENDING
+        )
         val rng_mock = mockk<Random> {
             every { nextDouble() } returns 1.0
         }
@@ -126,17 +120,18 @@ class BillingServiceTest {
         val result = billingService.chargeAll()
         Assertions.assertEquals(expected, result)
         assertThrows<NetworkException> {
-            paymentProvider.charge(mock_invoice!!, dal, rng_mock)
+            paymentProvider.charge(mockInvoice!!, dal, rng_mock)
         }
-        dal.deleteCustomer((mock_customer!!.id))
-        dal.deleteInvoice(mock_invoice!!.id)
+        dal.deleteCustomer((mockCustomer!!.id))
+        dal.deleteInvoice(mockInvoice!!.id)
     }
 
     @Test
     fun `will return invoice already paid`() {
-        val mock_invoice = dal.saveInvoice(Invoice(
-        1, 1, Money(BigDecimal(10.00), Currency.USD), InvoiceStatus.PAID
-        ))
+        val mockCustomer = dal.createCustomer(Currency.USD)
+        val mockInvoice = dal.createInvoice(
+            Money(BigDecimal(10.00), Currency.USD), mockCustomer!!, InvoiceStatus.PAID
+        )
         val expected = mutableMapOf(
             "success" to mutableListOf<Int>(),
             "failure" to mutableListOf<Int>(), 
@@ -147,6 +142,7 @@ class BillingServiceTest {
         val billingService = BillingService(paymentProvider, dal, rng)
         val result = billingService.chargeAll()
         Assertions.assertEquals(expected, result)
-        dal.deleteInvoice(mock_invoice!!.id)
+        dal.deleteInvoice(mockInvoice!!.id)
+        dal.deleteCustomer(mockCustomer.id)
     }
 }
